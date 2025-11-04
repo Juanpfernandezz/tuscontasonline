@@ -13,7 +13,7 @@ const WHATSAPP_LINK = "https://wa.me/3777236888";
 // ==== SMALL UI PRIMITIVES (Aceternity-inspired) ============================
 function FlipWords({
   words,
-  interval = 1600,
+  interval = 3000,
   className = "",
 }: {
   words: string[];
@@ -302,11 +302,11 @@ function Hero({ colors }: { colors: any }) {
           <h1 className="text-4xl md:text-5xl font-serif font-semibold leading-tight">
             Tu contaduría online, <span style={{ color: ACCENT }}>sin
             <span className="sr-only"> </span>
-            <FlipWords className="ml-2" words={["complicaciones","vuelta","demoras","papeles"]} />
+            <FlipWords className="ml-2" words={["vueltas","demoras"]} />
             </span>.
           </h1>
           <p className="mt-4 max-w-prose" style={{ color: colors.muted }}>
-            Acompañamos a <span className="keyword">emprendedoras</span> y <span className="keyword">pymes</span> con <a href="#services" className="keyword">servicios</a> contables claros, 100% digitales y a medida.
+            Acompañamos a emprendedoras y pymes con servicios contables claros, 100% digitales y a medida.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -326,9 +326,9 @@ function Hero({ colors }: { colors: any }) {
             </a>
           </div>
           <ul className="mt-6 space-y-2 text-sm" style={{ color: colors.muted }}>
-            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> Atención ágil y cercana</li>
-            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> Gestión impositiva al día</li>
-            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> 100% online</li>
+            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> <span className="keyword">Atención ágil y cercana</span></li>
+            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> <span className="keyword">Gestión impositiva al día</span></li>
+            <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4" style={{ color: ACCENT }}/> <span className="keyword">100% online</span></li>
           </ul>
         </div>
         <MockCard colors={colors} />
