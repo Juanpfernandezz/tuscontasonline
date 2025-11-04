@@ -125,7 +125,7 @@ function AnimatedTestimonials({
                 <div className="w-full max-w-[280px] aspect-[4/3] bg-white/60 rounded-2xl grid place-items-center overflow-hidden">
                   {/* brand logo */}
                   {/* Replace logo size as needed */}
-                  <img src={it.logo} alt={it.logoAlt} className="max-h-full max-w-full object-contain p-4" />
+                  <img src={it.logo} alt={it.logoAlt} className="w-full h-auto object-cover rounded-2xl" />
                 </div>
               </div>
 
