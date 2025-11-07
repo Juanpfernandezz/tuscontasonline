@@ -247,8 +247,8 @@ function CardHover({
 // ==== APP ===================================================================
 export default function TusContasOnlineMVP() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") return "light";
-    return (localStorage.getItem("tco-theme") as "light" | "dark") || "light";
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("tco-theme") as "light" | "dark") || "dark";
   });
 
   useEffect(() => {
@@ -437,7 +437,7 @@ function Header({
                 className="inline-flex items-center gap-2 rounded-2xl px-3 py-2 transition-colors"
                 style={{ border: `1px solid ${colors.border}` }}
               >
-                <Pencil className="h-4 w-4" /> <span className="hidden sm:inline text-sm">Sitio web (Admin)</span>
+                <Pencil className="h-4 w-4" /> <span className="hidden sm:inline text-sm">Sitio web</span>
               </button>
               <button
                 onClick={onLogout}
@@ -768,34 +768,130 @@ function AnimatedTestimonials({
   );
 }
 
-// ==== CONTACT (igual que antes) ============================================
+// ==== CONTACT (validación accesible y estética mejorada) ====================
 function Contact({ colors }: { colors: any }) {
+  type Fields = "nombre" | "apellido" | "email" | "mensaje";
+  type FormData = Record<Fields, string>;
+  type FormErrors = Partial<Record<Fields, string>>;
+  type Touched = Partial<Record<Fields, boolean>>;
+
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [form, setForm] = useState<FormData>({
+    nombre: "",
+    apellido: "",
+    email: "",
+    mensaje: "",
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Touched>({});
+  const [globalMsg, setGlobalMsg] = useState<string>("");
+
   const formRef = useRef<HTMLFormElement>(null);
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Validación por campo y total
+  const validateField = (k: Fields, v: string): string | "" => {
+    const val = v.trim();
+    if (k === "nombre") return val ? "" : "Ingresá tu nombre.";
+    if (k === "apellido") return val ? "" : "Ingresá tu apellido.";
+    if (k === "email") return val ? (emailRe.test(val) ? "" : "Email inválido.") : "Ingresá tu email.";
+    if (k === "mensaje") return ""; // opcional
+    return "";
+  };
+
+  const validateAll = (data: FormData): FormErrors => {
+    const e: FormErrors = {};
+    (Object.keys(data) as Fields[]).forEach((k) => {
+      const msg = validateField(k, data[k]);
+      if (msg) e[k] = msg;
+    });
+    return e;
+  };
+
+  // Handlers
+  const onChange =
+    (k: Fields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const v = e.target.value;
+      setForm((f) => ({ ...f, [k]: v }));
+      if (touched[k]) {
+        // validar en vivo sólo si ya se tocó el campo
+        const msg = validateField(k, v);
+        setErrors((prev) => ({ ...prev, [k]: msg || undefined }));
+      }
+    };
+
+  const onBlur =
+    (k: Fields) =>
+    (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setTouched((t) => ({ ...t, [k]: true }));
+      const msg = validateField(k, e.target.value);
+      setErrors((prev) => ({ ...prev, [k]: msg || undefined }));
+    };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === "loading") return;
-    const form = formRef.current!;
-    const hp = (form.querySelector('input[name="empresa"]') as HTMLInputElement)?.value || "";
+
+    // honeypot
+    const hp = (formRef.current?.querySelector('input[name="empresa"]') as HTMLInputElement)?.value || "";
     if (hp.trim().length > 0) {
       setStatus("error");
+      setGlobalMsg("Se detectó un error en el envío.");
       return;
     }
 
-    setStatus("loading");
-    try {
-      await new Promise((res) => setTimeout(res, 1300));
-      setStatus("success");
-      form.reset();
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch (err) {
+    // Validar todo
+    const allErrs = validateAll(form);
+    setErrors(allErrs);
+    setTouched({ nombre: true, apellido: true, email: true, mensaje: touched.mensaje ?? false });
+
+    const hasErrors = Object.values(allErrs).some(Boolean);
+    if (hasErrors) {
       setStatus("error");
+      setGlobalMsg("Completá los campos marcados.");
+      return;
+    }
+
+    // Simulación de request
+    setStatus("loading");
+    setGlobalMsg("");
+    try {
+      await new Promise((res) => setTimeout(res, 1200));
+      setStatus("success");
+      setGlobalMsg("¡Enviado!");
+      setForm({ nombre: "", apellido: "", email: "", mensaje: "" });
+      setErrors({});
+      setTouched({});
+      formRef.current?.reset();
+      setTimeout(() => {
+        setStatus("idle");
+        setGlobalMsg("");
+      }, 2000);
+    } catch {
+      setStatus("error");
+      setGlobalMsg("Ocurrió un problema al enviar.");
       setTimeout(() => setStatus("idle"), 2000);
     }
   };
 
-  const BtnIcon = status === "loading" ? Loader2 : status === "success" ? Check : status === "error" ? X : MessageCircle;
+  const BtnIcon =
+    status === "loading" ? Loader2 : status === "success" ? Check : status === "error" ? X : MessageCircle;
+
+  // Helpers de estilo por campo
+  const fieldClass = (k: Fields) => {
+    const isTouched = !!touched[k];
+    const hasError = !!errors[k];
+    const valid = isTouched && !hasError && form[k].trim().length > 0;
+    const base =
+      "mt-1 w-full rounded-2xl border bg-transparent px-3 py-2 outline-none focus:ring-2 transition";
+    if (hasError) return `${base} ring-1 ring-red-300 border-red-300`;
+    if (valid) return `${base} ring-1 ring-green-300 border-green-300`;
+    return `${base}`;
+  };
+
+  const msgId = (k: Fields) => `field-msg-${k}`;
 
   return (
     <section id="contact" className="scroll-mt-24 py-16">
@@ -829,76 +925,160 @@ function Contact({ colors }: { colors: any }) {
             </a>
           </div>
 
-          <p className="mt-6 text-xs" style={{ color: colors.muted2 }}>
-            También podés completar el formulario y te contactamos a la brevedad.
+          {/* Live region para feedback global */}
+          <p
+            className="mt-6 text-sm min-h-[1.25rem]"
+            style={{ color: status === "error" ? "#ef4444" : status === "success" ? "#16a34a" : colors.muted2 }}
+            role="status"
+            aria-live="polite"
+          >
+            {globalMsg}
           </p>
         </div>
 
         <form
           ref={formRef}
           onSubmit={onSubmit}
+          noValidate
           className="rounded-3xl border p-6 shadow-md hover:shadow-lg transition-all duration-200"
           style={{ backgroundColor: colors.panel, borderColor: colors.border }}
         >
           <div className="grid sm:grid-cols-2 gap-4">
+            {/* Nombre */}
             <div>
-              <label className="text-sm">Nombre</label>
+              <label className="text-sm" htmlFor="f-nombre">
+                Nombre
+              </label>
               <input
+                id="f-nombre"
                 name="nombre"
-                className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2 outline-none focus:ring-2"
+                className={fieldClass("nombre")}
                 style={{ borderColor: colors.border }}
                 placeholder="Tu nombre"
-                required
+                value={form.nombre}
+                onChange={onChange("nombre")}
+                onBlur={onBlur("nombre")}
+                aria-invalid={!!errors.nombre}
+                aria-describedby={errors.nombre ? msgId("nombre") : undefined}
+              />
+              <FieldMsg
+                id={msgId("nombre")}
+                ok={touched.nombre ? !errors.nombre : false}
+                error={errors.nombre}
               />
             </div>
+
+            {/* Apellido */}
             <div>
-              <label className="text-sm">Apellido</label>
+              <label className="text-sm" htmlFor="f-apellido">
+                Apellido
+              </label>
               <input
+                id="f-apellido"
                 name="apellido"
-                className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2 outline-none focus:ring-2"
+                className={fieldClass("apellido")}
                 style={{ borderColor: colors.border }}
                 placeholder="Tu apellido"
-                required
+                value={form.apellido}
+                onChange={onChange("apellido")}
+                onBlur={onBlur("apellido")}
+                aria-invalid={!!errors.apellido}
+                aria-describedby={errors.apellido ? msgId("apellido") : undefined}
+              />
+              <FieldMsg
+                id={msgId("apellido")}
+                ok={touched.apellido ? !errors.apellido : false}
+                error={errors.apellido}
               />
             </div>
+
+            {/* Email */}
             <div className="sm:col-span-2">
-              <label className="text-sm">Email</label>
+              <label className="text-sm" htmlFor="f-email">
+                Email
+              </label>
               <input
+                id="f-email"
                 type="email"
                 name="email"
-                className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2 outline-none focus:ring-2"
+                className={fieldClass("email")}
                 style={{ borderColor: colors.border }}
                 placeholder="tu@email.com"
-                required
+                value={form.email}
+                onChange={onChange("email")}
+                onBlur={onBlur("email")}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? msgId("email") : undefined}
               />
+              <FieldMsg id={msgId("email")} ok={touched.email ? !errors.email : false} error={errors.email} />
             </div>
+
+            {/* Honeypot */}
             <input type="text" name="empresa" className="hidden" tabIndex={-1} autoComplete="off" />
+
+            {/* Mensaje (opcional) */}
             <div className="sm:col-span-2">
-              <label className="text-sm">Mensaje</label>
+              <label className="text-sm" htmlFor="f-mensaje">
+                Mensaje
+              </label>
               <textarea
+                id="f-mensaje"
                 name="mensaje"
-                className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2 outline-none focus:ring-2"
+                className={fieldClass("mensaje")}
                 style={{ borderColor: colors.border }}
                 rows={4}
                 placeholder="Contanos en qué te podemos ayudar"
+                value={form.mensaje}
+                onChange={onChange("mensaje")}
+                onBlur={onBlur("mensaje")}
+                aria-invalid={!!errors.mensaje}
+                aria-describedby={errors.mensaje ? msgId("mensaje") : undefined}
+              />
+              <FieldMsg
+                id={msgId("mensaje")}
+                ok={touched.mensaje ? !errors.mensaje : false}
+                error={errors.mensaje}
               />
             </div>
           </div>
+
           <button
-            disabled={status !== "idle"}
+            disabled={status === "loading"}
             className="mt-4 inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-white shadow transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
-            style={{ backgroundColor: status === "error" ? "#ef4444" : status === "success" ? "#16a34a" : ACCENT }}
+            style={{
+              backgroundColor:
+                status === "error" ? "#ef4444" : status === "success" ? "#16a34a" : ACCENT,
+            }}
           >
             <BtnIcon className={`h-5 w-5 ${status === "loading" ? "animate-spin" : ""}`} />
             {status === "idle" && "Enviar consulta"}
             {status === "loading" && "Enviando…"}
             {status === "success" && "¡Enviado!"}
-            {status === "error" && "Hubo un error"}
+            {status === "error" && "Revisá el formulario"}
           </button>
         </form>
       </div>
     </section>
   );
+}
+
+// Sub-componente de mensajes inline por campo
+function FieldMsg({ id, ok, error }: { id: string; ok: boolean; error?: string }) {
+  if (error) {
+    return (
+      <p id={id} className="mt-1 text-xs flex items-center gap-1 text-red-600">
+        <AlertCircle className="h-3.5 w-3.5" /> {error}
+      </p>
+    );
+  }
+  if (ok) {
+    return (
+      <p id={id} className="mt-1 text-xs flex items-center gap-1 text-green-600">
+        <CheckCircle className="h-3.5 w-3.5" /> ¡Listo!
+      </p>
+    );
+  }
+  return <span id={id} className="sr-only"></span>;
 }
 
 // ==== FOOTER ================================================================
@@ -1115,7 +1295,7 @@ function AdminPanel({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute right-0 top-0 h-full w-full max-w-3xl overflow-y-auto border-l bg-white dark:bg-neutral-900" style={{ borderColor: colors.border }}>
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white/80 dark:bg-neutral-900/80 backdrop-blur px-4 py-3" style={{ borderColor: colors.border }}>
-          <h3 className="text-base font-semibold">Sitio web (Admin)</h3>
+          <h3 className="text-base font-semibold">Administrador</h3>
           <div className="flex items-center gap-2">
             <button onClick={save} className="rounded-2xl px-4 py-2 text-white" style={{ backgroundColor: ACCENT }} aria-label="Guardar cambios">
               Guardar
