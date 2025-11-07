@@ -109,8 +109,8 @@ const LS_CONTENT_KEY = "tco-content"; // JSON con SiteContent
 const LS_ADMIN_KEY = "tco-admin"; // JSON con AdminSession
 
 // ==== ADMIN CREDENCIALES (placeholder; reemplazá por las tuyas) ============
-const ADMIN_USER = "admin@tco";
-const ADMIN_PASS = "TCO-2025!";
+const ADMIN_USER = "juanfer";
+const ADMIN_PASS = "1234321";
 const ADMIN_TTL_HOURS = 12;
 
 // ==== HELPERS (contenido) ===================================================
