@@ -1207,6 +1207,11 @@ function AdminPanel({
   const fileRefLogo = useRef<HTMLInputElement>(null);
   const fileRefImport = useRef<HTMLInputElement>(null);
   const fileRefAboutImg = useRef<HTMLInputElement>(null);
+  const [heroFlipRaw, setHeroFlipRaw] = useState<string>(content.hero.flipWords.join(", "));
+  
+  useEffect(() => {
+  setHeroFlipRaw(draft.hero.flipWords.join(", "));
+}, [draft.hero.flipWords]);
 
   useEffect(() => {
     setDraft(content);
@@ -1371,16 +1376,19 @@ function AdminPanel({
               <div>
                 <label className="text-xs">Palabras animadas (separadas por coma)</label>
                 <input
-                  className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2"
-                  style={{ borderColor: colors.border }}
-                  value={draft.hero.flipWords.join(", ")}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      hero: { ...draft.hero, flipWords: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) },
-                    })
-                  }
-                />
+                   className="mt-1 w-full rounded-2xl border bg-transparent px-3 py-2"
+                   style={{ borderColor: colors.border }}
+                    value={heroFlipRaw}
+                   onChange={(e) => setHeroFlipRaw(e.target.value)}              // no trim acá
+                   onBlur={(e) => {
+                     const arr = e.target.value
+                       .split(",")
+                       .map((s) => s.replace(/\s+/g, " ").trim())                // normalizá espacios internos
+                        .filter(Boolean);
+                      setDraft((d) => ({ ...d, hero: { ...d.hero, flipWords: arr } }));
+                    }}
+                    placeholder="sin vueltas, sin demoras"
+                  />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-xs">Subtítulo</label>
