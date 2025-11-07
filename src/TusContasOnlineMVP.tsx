@@ -524,19 +524,59 @@ function Hero({ colors, content }: { colors: any; content: SiteContent }) {
 
 // ==== LOGO CARD (contain centrado, caja cuadrada estable) ==================
 function LogoCard({ colors, logoUrl }: { colors: any; logoUrl: string | null }) {
-  const [ok, setOk] = useState(true);
+  const [logoOk, setLogoOk] = useState(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [transform, setTransform] = useState("rotateX(0deg) rotateY(0deg) scale(1)");
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const rotMax = 10;
+    const scale = 1.03;
+    const rotateY = ((x / rect.width) - 0.5) * (rotMax * 2);
+    const rotateX = -((y / rect.height) - 0.5) * (rotMax * 2);
+    setTransform(`rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`);
+  };
+
+  const handleLeave = () => setTransform("rotateX(0deg) rotateY(0deg) scale(1)");
+
   return (
     <div className="mx-auto w-full max-w-md grid place-items-center">
-      <div className="rounded-3xl shadow-2xl p-4" style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(2px)" }}>
+      <div
+        ref={cardRef}
+        className="rounded-3xl shadow-2xl"
+        style={{ perspective: "900px", position: "relative" }}
+        onMouseMove={handleMove}
+        onMouseLeave={handleLeave}
+      >
         <div
-          className="relative w-[288px] h-[288px] sm:w-[320px] sm:h-[320px] rounded-2xl border grid place-items-center bg-white/70"
-          style={{ borderColor: colors.border }}
+          className="rounded-3xl"
+          style={{
+            transform: transform,
+            transformStyle: "preserve-3d",
+            transition: "transform 150ms ease",
+            boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+            background: "rgba(255,255,255,0.75)",
+            backdropFilter: "blur(2px)",
+          }}
         >
-          {ok && logoUrl ? (
-            <img src={logoUrl} alt="Logo" className="max-w-full max-h-full object-contain" onError={() => setOk(false)} />
+          {logoOk && logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="Logo Tus Contas Online"
+              className="block w-72 md:w-80 h-auto rounded-3xl"
+              style={{ display: "block", transform: "translateZ(0.01px)" }}
+              onError={() => setLogoOk(false)}
+            />
           ) : (
-            <div className="text-sm text-center text-neutral-500">
-              Subí tu logo (ideal 800×800).<br />Si no coincide, se centrará sin deformarse.
+            <div
+              className="w-72 md:w-80 h-24 rounded-3xl grid place-items-center text-white font-bold"
+              style={{ backgroundColor: ACCENT }}
+            >
+              LOGO
             </div>
           )}
         </div>
