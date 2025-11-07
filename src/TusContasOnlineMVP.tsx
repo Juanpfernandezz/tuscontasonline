@@ -109,8 +109,8 @@ const LS_CONTENT_KEY = "tco-content"; // JSON con SiteContent
 const LS_ADMIN_KEY = "tco-admin"; // JSON con AdminSession
 
 // ==== ADMIN CREDENCIALES (placeholder; reemplazá por las tuyas) ============
-const ADMIN_USER = "juanfer";
-const ADMIN_PASS = "1234321";
+const ADMIN_USER = "jasminynicole"
+const ADMIN_PASS = "MP4120"
 const ADMIN_TTL_HOURS = 12;
 
 // ==== HELPERS (contenido) ===================================================
@@ -1074,7 +1074,7 @@ function FieldMsg({ id, ok, error }: { id: string; ok: boolean; error?: string }
   if (ok) {
     return (
       <p id={id} className="mt-1 text-xs flex items-center gap-1 text-green-600">
-        <CheckCircle className="h-3.5 w-3.5" /> ¡Listo!
+        <CheckCircle className="h-3.5 w-3.5" /> 
       </p>
     );
   }
