@@ -291,7 +291,7 @@ function Header({
     const onScroll = () => {
       const y = window.scrollY;
       setSolid(y > 16);
-      setHidden(y > lastY.current && y > 120); // hide when scrolling down
+      setHidden(y > lastY.current && y > 120);
       lastY.current = y;
     };
     onScroll();
@@ -313,8 +313,10 @@ function Header({
       }}
     >
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+        
+        {/* Marca SIEMPRE visible en mobile y desktop */}
         <a href="#home" className="flex items-center gap-3 group">
-          <span className="hidden sm:inline text-base md:text-lg font-serif font-semibold tracking-tight">
+          <span className="text-base md:text-lg font-serif font-semibold tracking-tight">
             Tus Contas{" "}
             <span style={{ color: ACCENT }} className="keyword">
               Online
@@ -340,30 +342,95 @@ function Header({
           ))}
         </nav>
 
-        {/* Right side: theme + WhatsApp + mobile menu */}
+        {/* Right side */}
         <div className="flex items-center gap-2">
-          {/* Botón menú mobile */}
-          <button
-            onClick={toggleMobile}
-            aria-label="Abrir menú"
-            aria-expanded={mobileOpen}
-            className="inline-flex items-center justify-center rounded-2xl p-2 border md:hidden"
-            style={{ borderColor: colors.border }}
-          >
-            <Menu className="h-5 w-5" />
-          </button>
 
-          {/* Botón WhatsApp desktop/tablet */}
+          {/* WhatsApp button (solo escritorio/tablet) */}
           <a
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-white shadow-sm hover:shadow transition-shadow"
+            className="hidden sm:inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-white shadow-sm hover:shadow transition-shadow md:flex"
             style={{ backgroundColor: ACCENT }}
           >
             <MessageCircle className="h-4 w-4" />
             <span className="text-sm font-medium">Escribinos</span>
           </a>
+
+          {/* Botón tema SOLO escritorio */}
+          <button
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            aria-label="Cambiar tema"
+            className="hidden md:inline-flex items-center gap-2 rounded-2xl px-3 py-2 transition-colors"
+            style={{ border: `1px solid ${colors.border}` }}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          {/* Menu hamburguesa (solo mobile) */}
+          <button
+            onClick={toggleMobile}
+            aria-label="Abrir menú"
+            aria-expanded={mobileOpen}
+            className="inline-flex md:hidden items-center justify-center rounded-2xl p-2 border"
+            style={{ borderColor: colors.border }}
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Menú mobile */}
+      {mobileOpen && (
+        <div
+          className="md:hidden border-t"
+          style={{ backgroundColor: colors.panel, borderColor: colors.border }}
+        >
+          <nav className="px-4 py-3 flex flex-col gap-3">
+            {links.map((l) => (
+              <a
+                key={l.href + l.label}
+                href={l.href}
+                onClick={closeMobile}
+                className="text-sm py-1"
+                style={{ color: colors.text }}
+              >
+                {l.label}
+              </a>
+            ))}
+
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              onClick={closeMobile}
+              className="mt-2 inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium shadow-sm"
+              style={{ backgroundColor: ACCENT, color: "#ffffff" }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Escribir por WhatsApp
+            </a>
+
+            {/* Toggle tema en mobile */}
+            <button
+              onClick={() => {
+                setTheme(theme === "light" ? "dark" : "light");
+                closeMobile();
+              }}
+              className="mt-2 inline-flex items-center gap-2 rounded-2xl px-3 py-2 text-sm border"
+              style={{ borderColor: colors.border, color: colors.text }}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              <span>Cambiar tema</span>
+            </button>
+          </nav>
+        </div>
+      )}
+
+      <style>{`.navlink { position: relative }`}</style>
+    </header>
+  );
+}
 
           {/* Botón tema siempre visible */}
           <button
