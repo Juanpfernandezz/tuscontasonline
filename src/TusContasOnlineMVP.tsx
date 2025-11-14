@@ -60,7 +60,7 @@ const DEFAULT_CONTENT: SiteContent = {
   logoUrl: "/images/logo-tus-contas-online.jpg",
   hero: {
     titleBase: "Tu contaduría online,",
-    flipWords: ["sin vueltas", "sin demoras"],
+    flipWords: ["sin vueltas.", "sin demoras."],
     subtitle:
       "Acompañamos a emprendedoras y pymes con servicios contables claros, 100% digitales y a medida.",
     bullets: ["Atención ágil y cercana", "Gestión impositiva al día", "100% online"],
@@ -440,18 +440,19 @@ function Hero({ colors, content }: { colors: any; content: SiteContent }) {
     <section id="home" className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10" style={{ backgroundColor: colors.wash }} />
       <div className="mx-auto max-w-6xl px-4 pt-10 pb-20 grid md:grid-cols-2 gap-8 items-center">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-serif font-semibold leading-tight">
+        <div className="text-center md:text-left">
+          <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight font-sans">
             {h.titleBase}{" "}
             <span style={{ color: ACCENT }}>
               <span className="sr-only"> </span>
               <FlipWords className="ml-2" words={h.flipWords} />
             </span>
           </h1>
-          <p className="mt-4 max-w-prose" style={{ color: colors.muted }}>
+          <p className="mt-4 max-w-prose mx-auto md:mx-0" style={{ color: colors.muted }}>
             {h.subtitle}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+
+          <div className="mt-6 flex flex-wrap gap-3 justify-center md:justify-start">
             <a
               href="#services"
               className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-white shadow hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
@@ -469,7 +470,11 @@ function Hero({ colors, content }: { colors: any; content: SiteContent }) {
               Consultar por WhatsApp
             </a>
           </div>
-          <ul className="mt-6 space-y-2 text-sm" style={{ color: colors.muted }}>
+
+          <ul
+            className="mt-6 space-y-2 text-sm flex flex-col items-center md:items-start"
+            style={{ color: colors.muted }}
+          >
             {h.bullets.map((b, i) => (
               <li key={i} className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" style={{ color: ACCENT }} />{" "}
@@ -478,11 +483,13 @@ function Hero({ colors, content }: { colors: any; content: SiteContent }) {
             ))}
           </ul>
         </div>
+
         <LogoCard colors={colors} logoUrl={content.logoUrl} />
       </div>
     </section>
   );
 }
+
 
 // ==== LOGO CARD (contain centrado, caja cuadrada estable) ==================
 function LogoCard({ colors, logoUrl }: { colors: any; logoUrl: string | null }) {
@@ -553,10 +560,16 @@ function Services({ colors, content }: { colors: any; content: SiteContent }) {
   return (
     <section id="services" className="scroll-mt-24 py-16">
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="text-3xl font-serif font-semibold">Servicios</h2>
-        <p className="mt-2 max-w-prose" style={{ color: colors.muted }}>
-          Elegí el plan o servicio que mejor se adapte a tu etapa.
-        </p>
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl font-semibold tracking-tight font-sans">Servicios</h2>
+          <p
+            className="mt-2 max-w-prose text-sm md:text-base mx-auto md:mx-0"
+            style={{ color: colors.muted }}
+          >
+            Elegí el plan o servicio que mejor se adapte a tu etapa.
+          </p>
+        </div>
+
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map((c, idx) => (
             <CardHover
@@ -570,7 +583,7 @@ function Services({ colors, content }: { colors: any; content: SiteContent }) {
               >
                 ✓
               </div>
-              <h3 className="mt-4 text-lg font-medium">{c.title}</h3>
+              <h3 className="mt-4 text-lg font-semibold font-sans tracking-tight">{c.title}</h3>
               <p className="mt-1 text-sm" style={{ color: colors.muted }}>
                 {c.desc}
               </p>
@@ -589,6 +602,7 @@ function Services({ colors, content }: { colors: any; content: SiteContent }) {
   );
 }
 
+
 // ==== ABOUT (EDITABLE) ======================================================
 function AboutUs({ colors, content }: { colors: any; content: AboutContent }) {
   const paragraphs = content.paragraph
@@ -596,17 +610,23 @@ function AboutUs({ colors, content }: { colors: any; content: AboutContent }) {
     .map((p) => p.trim())
     .filter(Boolean);
   const imgSrc = content.imageUrl || "/images/imagen-equipo.jpg";
+
   return (
     <section id="about" className="scroll-mt-24 py-16" style={{ backgroundColor: colors.wash }}>
       <div className="mx-auto max-w-6xl px-4 grid md:grid-cols-2 gap-8 items-center">
-        <div>
-          <h2 className="text-3xl font-serif font-semibold">{content.title}</h2>
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl font-semibold tracking-tight font-sans">
+            {content.title}
+          </h2>
           {paragraphs.map((p, i) => (
-            <p key={i} className="mt-3" style={{ color: colors.muted }}>
+            <p key={i} className="mt-3 text-sm md:text-base" style={{ color: colors.muted }}>
               {p}
             </p>
           ))}
-          <ul className="mt-4 space-y-2 text-sm" style={{ color: colors.muted }}>
+          <ul
+            className="mt-4 space-y-2 text-sm flex flex-col items-center md:items-start"
+            style={{ color: colors.muted }}
+          >
             {content.bullets.map((b, i) => (
               <li key={i} className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" style={{ color: ACCENT }} /> {b}
@@ -639,6 +659,7 @@ function AboutUs({ colors, content }: { colors: any; content: AboutContent }) {
   );
 }
 
+
 // ==== TESTIMONIOS (lee items mapeados desde content) =======================
 function AnimatedTestimonials({
   items,
@@ -664,10 +685,12 @@ function AnimatedTestimonials({
 
   const it = items[idx] || { logo: "", logoAlt: "", quote: "", name: "" };
 
-  return (
+    return (
     <section id="testimonials" className="scroll-mt-24 py-16">
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="text-3xl font-serif font-semibold">Clientes & Casos de éxito</h2>
+        <h2 className="text-3xl font-semibold tracking-tight font-sans text-center md:text-left">
+          Clientes & Casos de éxito
+        </h2>
 
         <div className="mt-8 relative">
           {/* Card */}
@@ -675,6 +698,7 @@ function AnimatedTestimonials({
             className="rounded-3xl border shadow-md overflow-hidden"
             style={{ backgroundColor: colors.panel, borderColor: colors.border }}
           >
+
             <div className="grid md:grid-cols-5 gap-0">
               {/* Imagen 4:3 cover, centro => nunca se deforma */}
               <div
@@ -888,12 +912,14 @@ function Contact({ colors }: { colors: any }) {
     <section id="contact" className="scroll-mt-24 py-16">
       <div className="mx-auto max-w-6xl px-4 grid md:grid-cols-2 gap-10">
         <div>
-          <h2 className="text-3xl font-serif font-semibold">Contacto</h2>
-          <p className="mt-2" style={{ color: colors.muted }}>
+          <h2 className="text-3xl font-semibold tracking-tight font-sans text-center md:text-left">
+            Contacto
+          </h2>
+          <p className="mt-2 text-sm md:text-base text-center md:text-left" style={{ color: colors.muted }}>
             Elegí el canal que prefieras.
           </p>
 
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
             <a
               href={WHATSAPP_LINK}
               target="_blank"
@@ -915,6 +941,7 @@ function Contact({ colors }: { colors: any }) {
               Instagram
             </a>
           </div>
+
 
           {/* Live region para feedback global */}
           <p
