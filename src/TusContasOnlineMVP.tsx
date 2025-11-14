@@ -432,68 +432,6 @@ function Header({
   );
 }
 
-          {/* Botón tema siempre visible */}
-          <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            aria-label="Cambiar tema"
-            className="inline-flex items-center gap-2 rounded-2xl px-3 py-2 transition-colors"
-            style={{ border: `1px solid ${colors.border}` }}
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Menú mobile desplegable */}
-      {mobileOpen && (
-        <div
-          className="md:hidden border-t"
-          style={{ backgroundColor: colors.panel, borderColor: colors.border }}
-        >
-          <nav className="px-4 py-3 flex flex-col gap-3">
-            {links.map((l) => (
-              <a
-                key={l.href + l.label}
-                href={l.href}
-                onClick={closeMobile}
-                className="text-sm py-1"
-                style={{ color: colors.text }}
-              >
-                {l.label}
-              </a>
-            ))}
-
-            <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noreferrer"
-              onClick={closeMobile}
-              className="mt-2 inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium shadow-sm"
-              style={{ backgroundColor: ACCENT, color: "#ffffff" }}
-            >
-              <MessageCircle className="h-4 w-4" />
-              Escribir por WhatsApp
-            </a>
-
-            <button
-              onClick={() => {
-                setTheme(theme === "light" ? "dark" : "light");
-                closeMobile();
-              }}
-              className="mt-2 inline-flex items-center gap-2 rounded-2xl px-3 py-2 text-sm border"
-              style={{ borderColor: colors.border, color: colors.text }}
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              <span>Cambiar tema</span>
-            </button>
-          </nav>
-        </div>
-      )}
-
-      <style>{`.navlink { position: relative }`}</style>
-    </header>
-  );
-}
 
 // ==== HERO (lee desde content) =============================================
 function Hero({ colors, content }: { colors: any; content: SiteContent }) {
