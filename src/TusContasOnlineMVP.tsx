@@ -22,7 +22,7 @@ const LIGHT_WASH = "rgba(230,102,99,0.06)";
 const DARK_APP_BG = "#0B0B0B";
 const DARK_PANEL_BG = "#111111";
 
-const WHATSAPP_LINK = "https://wa.me/3624718712";
+const WHATSAPP_LINK = "https://wa.me/+5493624718712";
 
 // ==== TIPOS DE DATOS ========================================================
 // Contenido editable del sitio
@@ -55,7 +55,7 @@ type SiteContent = {
   testimonials: Testimonial[];
 };
 
-// ==== CONTENIDO DEFAULT (fallback si no hay localStorage) ===================
+// ==== CONTENIDO DEFAULT ===================
 const DEFAULT_CONTENT: SiteContent = {
   logoUrl: "/images/logo-tus-contas-online.jpg",
   hero: {
@@ -433,7 +433,7 @@ function Header({
 }
 
 
-// ==== HERO (lee desde content) =============================================
+// ==== HERO =============================================
 function Hero({ colors, content }: { colors: any; content: SiteContent }) {
   const h = content.hero;
   return (
