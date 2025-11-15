@@ -629,7 +629,8 @@ function AboutUs({ colors, content }: { colors: any; content: AboutContent }) {
           >
             {content.bullets.map((b, i) => (
               <li key={i} className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4" style={{ color: ACCENT }} /> {b}
+               <CheckCircle className="h-4 w-4" style={{ color: ACCENT }} />{" "}
+               <span className="keyword px-1 rounded-md">{b}</span>
               </li>
             ))}
           </ul>
